@@ -1,0 +1,24 @@
+# виртуальное окружение
+.venv/
+venv/
+ENV/
+env/
+
+# кеши питона
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# PyCharm
+.idea/
+
+# Mac OS
+.DS_Store
+
+# выводы / временные
+output/
+*.log
+
+# токены / конфиги
+.env
