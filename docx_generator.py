@@ -173,16 +173,70 @@ def _replace_in_paragraph(paragraph, mapping: dict, fallback_font_pt: int = 10):
 
 def _clear_paragraph_char_props(paragraph):
     """
-    Удаляет абзацные символьные свойства (w:pPr/w:rPr), навешивающие формат (в т.ч. 'x²'-эффект) на весь абзац.
+    Очищает только проблемные символьные свойства на уровне абзаца (w:pPr/w:rPr),
+    не удаляя весь rPr (иначе теряется формат нумерации).
     """
-    # noinspection PyProtectedMember
     p = paragraph._element
     pPr = p.find(qn('w:pPr'))
     if pPr is None:
         return
     rPr = pPr.find(qn('w:rPr'))
-    if rPr is not None:
-        pPr.remove(rPr)
+    if rPr is None:
+        return
+    # удалить узлы, которые визуально "мельчат" или сдвигают текст
+    for tag in ("w:vertAlign", "w:position", "w:spacing", "w:smallCaps", "w:caps", "w:rStyle"):
+        node = rPr.find(qn(tag))
+        if node is not None:
+            rPr.remove(node)
+    # Явно вернуть baseline
+    va = OxmlElement('w:vertAlign')
+    va.set(qn('w:val'), 'baseline')
+    rPr.append(va)
+
+def _ensure_para_numbering_font(paragraph, font_name="Times New Roman", font_size_pt=10):
+    """
+    Выставляет шрифт/размер именно для НУМЕРАЦИИ абзаца (цифры списков 1., 2.1, ...),
+    т.к. Word берёт их из w:pPr/w:rPr.
+    """
+    p = paragraph._element
+    pPr = p.find(qn('w:pPr'))
+    if pPr is None:
+        pPr = OxmlElement('w:pPr')
+        p.insert(0, pPr)
+    rPr = pPr.find(qn('w:rPr'))
+    if rPr is None:
+        rPr = OxmlElement('w:rPr')
+        pPr.append(rPr)
+    # шрифты
+    rFonts = rPr.find(qn('w:rFonts'))
+    if rFonts is None:
+        rFonts = OxmlElement('w:rFonts')
+        rPr.append(rFonts)
+    for a in ('w:ascii', 'w:hAnsi', 'w:cs', 'w:eastAsia'):
+        rFonts.set(qn(a), font_name)
+        # убрать theme-override, если есть
+        theme_attr = a + 'Theme'
+        if rFonts.get(qn(theme_attr)) is not None:
+            del rFonts.attrib[qn(theme_attr)]
+    # размер в half-points
+    hp = str(int(font_size_pt * 2))
+    sz = rPr.find(qn('w:sz'))
+    if sz is None:
+        sz = OxmlElement('w:sz')
+        rPr.append(sz)
+    sz.set(qn('w:val'), hp)
+    szcs = rPr.find(qn('w:szCs'))
+    if szcs is None:
+        szcs = OxmlElement('w:szCs')
+        rPr.append(szcs)
+    szcs.set(qn('w:val'), hp)
+    # baseline
+    va = rPr.find(qn('w:vertAlign'))
+    if va is not None:
+        rPr.remove(va)
+    va = OxmlElement('w:vertAlign')
+    va.set(qn('w:val'), 'baseline')
+    rPr.append(va)
 
 def _normalize_paragraph(paragraph, pt: int = 10, family: str = "Times New Roman"):
     """
@@ -208,6 +262,7 @@ def _normalize_paragraph(paragraph, pt: int = 10, family: str = "Times New Roman
         pass
     _clear_paragraph_char_props(paragraph)
     _desuperscript_paragraph(paragraph)
+    _ensure_para_numbering_font(paragraph, family, pt)
     # прямое форматирование на все runs
     for run in paragraph.runs:
         _force_font(run, pt, family)
