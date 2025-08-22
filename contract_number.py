@@ -45,5 +45,5 @@ def generate_contract_number(contract_date: datetime) -> str:
     counters[date_key] = current_count
     save_counters(counters)
 
-    # возвращаем строку с слэшами → YY/MM/DD
-    return f"{current_count}/{contract_date.strftime('%y/%m/%d')}"
+    # возвращаем строку с тире и слэшами → X-YY/MM/DD
+    return f"{current_count}-{contract_date.strftime('%y/%m/%d')}"
