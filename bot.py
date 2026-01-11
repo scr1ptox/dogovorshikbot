@@ -1,12 +1,16 @@
 # bot.py
 import logging
 import os
+<<<<<<< HEAD
 from pathlib import Path
+=======
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 
 from dotenv import load_dotenv
 from telegram.constants import ParseMode
 from telegram.ext import Application, Defaults
 
+<<<<<<< HEAD
 from handlers import conv_handler
 
 
@@ -17,6 +21,18 @@ DATA_DIR = PROJECT_ROOT / "data"
 COUNTER_FILE = DATA_DIR / "counter.json"
 
 
+=======
+from paths import (
+    TEMPLATES_DIR,
+    OUTPUT_DIR,
+    DATA_DIR,
+    COUNTER_FILE,
+)
+
+from handlers import conv_handler
+
+
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 def ensure_project_layout() -> None:
     """
     Создаёт нужные директории/файлы, если их нет.

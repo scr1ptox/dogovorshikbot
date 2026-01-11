@@ -1,6 +1,9 @@
 # handlers.py
 from datetime import datetime
+<<<<<<< HEAD
 from pathlib import Path
+=======
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 import os
 import logging
 
@@ -12,8 +15,12 @@ from telegram.ext import (
 from contract_number import generate_contract_number
 from utils import generate_schedule, round_up_amount
 from docx_generator import generate_contract_and_schedule
+<<<<<<< HEAD
 
 OUTPUT_DIR = Path("output") / "ready_contracts"
+=======
+from paths import OUTPUT_DIR
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 
 # Conversation states
 (
@@ -186,8 +193,70 @@ async def ask_pledge(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return PLEDGE
     context.user_data["zalog"] = ans
 
+<<<<<<< HEAD
     await update.message.reply_text("Формирую документы...", reply_markup=ReplyKeyboardRemove())
     return await confirm_and_generate(update, context)
+=======
+    return await ask_confirm(update, context)
+
+
+async def ask_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    ud = context.user_data
+
+    qty = int(ud.get("kolichestvo_tov", 1))
+    total_sebestoim = ud["sebestoimost_tovara"] * qty
+    total_nacenka = ud["nacenka_tov"] * qty
+    polnaya = total_sebestoim + total_nacenka
+
+    text = (
+        "Проверьте данные:\n\n"
+        f"Договор: Мурабаха\n"
+        f"Номер: {ud['contract_number']}\n"
+        f"Дата: {ud['data_dogovora']}\n\n"
+        f"Покупатель: {ud['fio_pokupatelya']}\n"
+        f"Телефон: {ud['tel_pokupatelya']}\n\n"
+        f"Товар: {ud['pokupaemy_tov']}\n"
+        f"Количество: {qty}\n"
+        f"Полная стоимость: {polnaya} руб.\n"
+        f"Первый взнос: {ud['pervi_vznos']} руб.\n"
+        f"Срок: {ud['srok_dogov']} мес.\n"
+        f"День оплаты: {ud['data_opl']}\n"
+        f"Залог: {ud['zalog']}\n"
+    )
+
+    kb = ReplyKeyboardMarkup(
+        [["✅ Сгенерировать", "✏️ Исправить"], ["⛔️ Отмена"]],
+        resize_keyboard=True,
+        one_time_keyboard=True,
+    )
+
+    await update.message.reply_text(text, reply_markup=kb)
+    return CONFIRM
+
+
+async def handle_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    txt = (update.message.text or "").strip()
+
+    if txt.startswith("✅"):
+        await update.message.reply_text("Формирую документы...", reply_markup=ReplyKeyboardRemove())
+        return await confirm_and_generate(update, context)
+
+    if txt.startswith("✏️"):
+        await update.message.reply_text(
+            "Начнём заново. Введите дату договора (ДД.ММ.ГГГГ):",
+            reply_markup=ReplyKeyboardRemove(),
+        )
+        return DATE_CONTRACT
+
+    if txt.startswith("⛔"):
+        context.user_data.clear()
+        kb = ReplyKeyboardMarkup([["Мурабаха"]], resize_keyboard=True, one_time_keyboard=True)
+        await update.message.reply_text("Отменено. Выберите договор:", reply_markup=kb)
+        return CHOOSE_CONTRACT
+
+    await update.message.reply_text("Выберите действие кнопками.")
+    return CONFIRM
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 
 
 async def confirm_and_generate(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -250,16 +319,28 @@ async def confirm_and_generate(update: Update, context: ContextTypes.DEFAULT_TYP
     repl["contract_number"] = ud["contract_number"]
     # генерим .docx
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+<<<<<<< HEAD
     contract_path, schedule_path = generate_contract_and_schedule(
+=======
+    contract_docx, schedule_docx = generate_contract_and_schedule(
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
         data=repl, out_dir=OUTPUT_DIR
     )
 
     # отправляем и чистим
     try:
+<<<<<<< HEAD
         await update.message.reply_document(open(contract_path, "rb"), filename=contract_path.name)
         await update.message.reply_document(open(schedule_path, "rb"), filename=schedule_path.name)
     finally:
         for p in (contract_path, schedule_path):
+=======
+        for path in (contract_docx, schedule_docx):
+            with open(path, "rb") as f:
+                await update.message.reply_document(f, filename=path.name)
+    finally:
+        for p in (contract_docx, schedule_docx):
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
             try:
                 os.remove(p)
             except Exception:
@@ -293,7 +374,11 @@ conv_handler = ConversationHandler(
         TERM_MONTHS: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_term_months)],
         PAYDAY: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_payday)],
         PLEDGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_pledge)],
+<<<<<<< HEAD
         CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_pledge)],
+=======
+        CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirm)],
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     },
     fallbacks=[CommandHandler("start", start)],
 )

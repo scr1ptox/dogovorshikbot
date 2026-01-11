@@ -18,7 +18,20 @@ __pycache__/
 
 # выводы / временные
 output/
+<<<<<<< HEAD
 *.log
 
 # токены / конфиги
 .env
+=======
+output/**/*.docx
+output/**/*.pdf
+*.log
+
+# токены / конфиги
+.env
+data/counter.json
+
+*.pdf
+*.docx
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)

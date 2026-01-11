@@ -1,11 +1,50 @@
+<<<<<<< HEAD
 # docx_generator.py
 from pathlib import Path
+=======
+# noinspection PyProtectedMember,PyBroadException,PyTypeChecker,DuplicatedCode
+# docx_generator.py
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 from docx import Document
 from docx.shared import Pt
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+<<<<<<< HEAD
 
 
+=======
+from pathlib import Path
+from paths import TEMPLATE_CONTRACT, TEMPLATE_SCHEDULE
+import subprocess
+from docx.document import Document as DocxDocument
+import copy
+
+# ВАЖНО: чтобы документ оставался 1:1 как шаблон, мы НЕ трогаем стили/шрифты/абзацы.
+# Генератор делает только замену плейсхолдеров, сохраняя исходное форматирование шаблона.
+PRESERVE_TEMPLATE_FORMAT = True
+
+def _clone_run_rpr(src_run, dst_run) -> None:
+    """
+    Копирует XML-свойства символов (w:rPr) из src_run в dst_run.
+    Нужно, чтобы при жёсткой замене плейсхолдера новый run унаследовал форматирование шаблона.
+    """
+    # noinspection PyProtectedMember
+    src_r = src_run._element
+    # noinspection PyProtectedMember
+    dst_r = dst_run._element
+
+    src_rpr = src_r.find(qn('w:rPr'))
+    if src_rpr is None:
+        return
+
+    dst_rpr = dst_r.find(qn('w:rPr'))
+    if dst_rpr is not None:
+        dst_r.remove(dst_rpr)
+
+    dst_r.insert(0, copy.deepcopy(src_rpr))
+
+# noinspection DuplicatedCode
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 def _force_font(run, pt=10, family="Times New Roman"):
     # python-docx high-level API
     run.font.size = Pt(pt)
@@ -17,6 +56,10 @@ def _force_font(run, pt=10, family="Times New Roman"):
         run.font.subscript = False
         run.font.small_caps = False
         run.font.all_caps = False
+<<<<<<< HEAD
+=======
+    # noinspection PyBroadException
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     except Exception:
         pass
 
@@ -120,6 +163,12 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
     last_suffix_len = max(0, last_b - end)
 
     # 1) Первый run: оставляем только префикс до key
+<<<<<<< HEAD
+=======
+    # Сохраняем донор форматирования ДО изменения текста (важно для подчеркиваний/линий в шаблоне)
+    donor_run = first_run
+
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     first_text = first_run.text or ""
     first_run.text = first_text[:first_prefix_len]
 
@@ -137,6 +186,7 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
     # noinspection PyProtectedMember
     paragraph._p.insert(paragraph._p.index(insert_after._r) + 1, new_run._r)
     new_run.text = value
+<<<<<<< HEAD
     _force_font(new_run, pt, family)
 
     # Нормализуем все затронутые runs на случай странных тем/глифов
@@ -144,6 +194,24 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
         _force_font(spans[j][2], pt, family)
 
     _normalize_paragraph(paragraph, pt, family)
+=======
+
+    if PRESERVE_TEMPLATE_FORMAT:
+        # Наследуем форматирование из run, который содержал плейсхолдер в шаблоне.
+        # Это критично для строк с подчеркиванием/линиями (часто завязано на rPr конкретного run).
+        _clone_run_rpr(donor_run, new_run)
+        # На всякий случай унаследуем и run.style (если задан)
+        try:
+            new_run.style = donor_run.style
+        except Exception:
+            pass
+    else:
+        _force_font(new_run, pt, family)
+        # Нормализуем все затронутые runs на случай странных тем/глифов
+        for j in range(first_i, last_i + 1):
+            _force_font(spans[j][2], pt, family)
+        _normalize_paragraph(paragraph, pt, family)
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 
     return True
 
@@ -158,7 +226,12 @@ def _replace_in_paragraph(paragraph, mapping: dict, fallback_font_pt: int = 10):
                 new_text = new_text.replace(key, str(val))
         if new_text != original:
             run.text = new_text
+<<<<<<< HEAD
             _force_font(run, fallback_font_pt, "Times New Roman")
+=======
+            if not PRESERVE_TEMPLATE_FORMAT:
+                _force_font(run, fallback_font_pt, "Times New Roman")
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
             changed = True
 
     # 2) Жёсткая замена, если плейсхолдеры разбиты на несколько runs
@@ -168,7 +241,11 @@ def _replace_in_paragraph(paragraph, mapping: dict, fallback_font_pt: int = 10):
                 changed = True
 
     # Если что-то меняли – дополнительно нормализуем все runs абзаца (на случай тем/глифов)
+<<<<<<< HEAD
     if changed:
+=======
+    if changed and not PRESERVE_TEMPLATE_FORMAT:
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
         _normalize_paragraph(paragraph, fallback_font_pt, "Times New Roman")
 
 def _clear_paragraph_char_props(paragraph):
@@ -176,6 +253,10 @@ def _clear_paragraph_char_props(paragraph):
     Очищает только проблемные символьные свойства на уровне абзаца (w:pPr/w:rPr),
     не удаляя весь rPr (иначе теряется формат нумерации).
     """
+<<<<<<< HEAD
+=======
+    # noinspection PyProtectedMember
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     p = paragraph._element
     pPr = p.find(qn('w:pPr'))
     if pPr is None:
@@ -198,6 +279,10 @@ def _ensure_para_numbering_font(paragraph, font_name="Times New Roman", font_siz
     Выставляет шрифт/размер именно для НУМЕРАЦИИ абзаца (цифры списков 1., 2.1, ...),
     т.к. Word берёт их из w:pPr/w:rPr.
     """
+<<<<<<< HEAD
+=======
+    # noinspection PyProtectedMember
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     p = paragraph._element
     pPr = p.find(qn('w:pPr'))
     if pPr is None:
@@ -219,6 +304,10 @@ def _ensure_para_numbering_font(paragraph, font_name="Times New Roman", font_siz
         if rFonts.get(qn(theme_attr)) is not None:
             del rFonts.attrib[qn(theme_attr)]
     # размер в half-points
+<<<<<<< HEAD
+=======
+    # noinspection DuplicatedCode
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     hp = str(int(font_size_pt * 2))
     sz = rPr.find(qn('w:sz'))
     if sz is None:
@@ -247,6 +336,10 @@ def _normalize_paragraph(paragraph, pt: int = 10, family: str = "Times New Roman
     """
     try:
         paragraph.style = paragraph.part.styles['Normal']
+<<<<<<< HEAD
+=======
+    # noinspection PyBroadException
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     except Exception:
         # если стиль недоступен, просто продолжаем — применим прямое форматирование к run
         pass
@@ -258,6 +351,10 @@ def _normalize_paragraph(paragraph, pt: int = 10, family: str = "Times New Roman
         pf.page_break_before = False
         pf.space_before = None
         pf.space_after = None
+<<<<<<< HEAD
+=======
+    # noinspection PyBroadException
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     except Exception:
         pass
     _clear_paragraph_char_props(paragraph)
@@ -273,6 +370,10 @@ _SUPERSCRIPT_MAP = str.maketrans({
     "ˣ": "x", "ᵃ": "a", "ᵇ": "b", "ᶜ": "c", "ᵈ": "d", "ᵉ": "e"
 })
 
+<<<<<<< HEAD
+=======
+ # noinspection DuplicatedCode
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 def _desuperscript_paragraph(paragraph):
     """
     Убирает надстрочное форматирование (x² → x2) в абзаце:
@@ -297,6 +398,10 @@ def _desuperscript_paragraph(paragraph):
         try:
             run.font.superscript = False
             run.font.subscript = False
+<<<<<<< HEAD
+=======
+        # noinspection PyBroadException
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
         except Exception:
             pass
         # чистим XML выравнивание по вертикали
@@ -311,7 +416,11 @@ def _desuperscript_paragraph(paragraph):
         if run.text:
             run.text = run.text.translate(_SUPERSCRIPT_MAP)
 
+<<<<<<< HEAD
 def _replace_in_document(doc: Document, mapping: dict):
+=======
+def _replace_in_document(doc: DocxDocument, mapping: dict):
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     # Текст документа
     for para in doc.paragraphs:
         _replace_in_paragraph(para, mapping)
@@ -342,6 +451,7 @@ def _replace_in_document(doc: Document, mapping: dict):
 
 def fill_placeholders(doc_path: Path, output_path: Path, replacements: dict):
     doc = Document(str(doc_path))
+<<<<<<< HEAD
     # Enforce Normal style to TNR 10pt globally (baseline), helps avoid theme shrink
     try:
         normal_style = doc.styles['Normal']
@@ -349,11 +459,42 @@ def fill_placeholders(doc_path: Path, output_path: Path, replacements: dict):
         normal_style.font.size = Pt(10)
     except Exception:
         pass
+=======
+    if not PRESERVE_TEMPLATE_FORMAT:
+        # Enforce Normal style to TNR 10pt globally (baseline), helps avoid theme shrink
+        try:
+            normal_style = doc.styles['Normal']
+            normal_style.font.name = 'Times New Roman'
+            normal_style.font.size = Pt(10)
+        except Exception:
+            pass
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     _replace_in_document(doc, replacements)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))
 
 
+<<<<<<< HEAD
+=======
+def convert_docx_to_pdf(docx_path: Path) -> Path:
+    """
+    Конвертация DOCX → PDF через LibreOffice (headless).
+    Требует установленный libreoffice (soffice).
+    """
+    out_dir = docx_path.parent
+    cmd = [
+        "soffice",
+        "--headless",
+        "--convert-to", "pdf",
+        "--outdir", str(out_dir),
+        str(docx_path),
+    ]
+
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return docx_path.with_suffix(".pdf")
+
+
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 # noinspection SpellCheckingInspection,PyPep8Naming
 def generate_contract_and_schedule(data: dict, out_dir: Path):
     """
@@ -364,8 +505,13 @@ def generate_contract_and_schedule(data: dict, out_dir: Path):
     """
     out_dir.mkdir(parents=True, exist_ok=True)
 
+<<<<<<< HEAD
     contract_template = Path("templates/murabaha_template.docx")
     schedule_template = Path("templates/murabaha_schedule.docx")
+=======
+    contract_template = TEMPLATE_CONTRACT
+    schedule_template = TEMPLATE_SCHEDULE
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 
     contract_out = out_dir / f"dogovor_{data['contract_number']}.docx"
     schedule_out = out_dir / f"schedule_{data['contract_number']}.docx"

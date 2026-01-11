@@ -1,9 +1,14 @@
 # contract_number.py
 import json
 from datetime import datetime
+<<<<<<< HEAD
 from pathlib import Path
 
 COUNTER_FILE = Path("data/counter.json")
+=======
+from paths import COUNTER_FILE
+import portalocker
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
 
 
 def load_counters():
@@ -30,6 +35,7 @@ def save_counters(counters: dict):
 def generate_contract_number(contract_date: datetime) -> str:
     """
     Формат номера договора:
+<<<<<<< HEAD
     X/YY/MM/DD
 
     где:
@@ -46,4 +52,33 @@ def generate_contract_number(contract_date: datetime) -> str:
     save_counters(counters)
 
     # возвращаем строку с тире и слэшами → X-YY/MM/DD
+=======
+    X-YY/MM/DD
+    """
+
+    COUNTER_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    # открываем файл с блокировкой
+    with open(COUNTER_FILE, "a+", encoding="utf-8") as f:
+        portalocker.lock(f, portalocker.LOCK_EX)
+        f.seek(0)
+
+        try:
+            data = f.read().strip()
+            counters = json.loads(data) if data else {}
+        except json.JSONDecodeError:
+            counters = {}
+
+        date_key = contract_date.strftime("%Y-%m-%d")
+        current_count = counters.get(date_key, 0) + 1
+        counters[date_key] = current_count
+
+        f.seek(0)
+        f.truncate()
+        f.write(json.dumps(counters, ensure_ascii=False, indent=2))
+        f.flush()
+
+        portalocker.unlock(f)
+
+>>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
     return f"{current_count}-{contract_date.strftime('%y/%m/%d')}"
