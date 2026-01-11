@@ -19,11 +19,14 @@ __pycache__/
 # выводы / временные
 output/
 <<<<<<< HEAD
+<<<<<<< HEAD
 *.log
 
 # токены / конфиги
 .env
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 output/**/*.docx
 output/**/*.pdf
 *.log
@@ -33,5 +36,9 @@ output/**/*.pdf
 data/counter.json
 
 *.pdf
+<<<<<<< HEAD
 *.docx
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+*.docx
+>>>>>>> 1f959c8 (Restore project after local sync, add README)

@@ -2,6 +2,7 @@
 import json
 from datetime import datetime
 <<<<<<< HEAD
+<<<<<<< HEAD
 from pathlib import Path
 
 COUNTER_FILE = Path("data/counter.json")
@@ -9,6 +10,10 @@ COUNTER_FILE = Path("data/counter.json")
 from paths import COUNTER_FILE
 import portalocker
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+from paths import COUNTER_FILE
+import portalocker
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 
 
 def load_counters():
@@ -36,6 +41,7 @@ def generate_contract_number(contract_date: datetime) -> str:
     """
     Формат номера договора:
 <<<<<<< HEAD
+<<<<<<< HEAD
     X/YY/MM/DD
 
     где:
@@ -53,6 +59,8 @@ def generate_contract_number(contract_date: datetime) -> str:
 
     # возвращаем строку с тире и слэшами → X-YY/MM/DD
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     X-YY/MM/DD
     """
 
@@ -80,5 +88,8 @@ def generate_contract_number(contract_date: datetime) -> str:
 
         portalocker.unlock(f)
 
+<<<<<<< HEAD
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     return f"{current_count}-{contract_date.strftime('%y/%m/%d')}"

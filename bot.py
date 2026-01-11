@@ -2,14 +2,18 @@
 import logging
 import os
 <<<<<<< HEAD
+<<<<<<< HEAD
 from pathlib import Path
 =======
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 
 from dotenv import load_dotenv
 from telegram.constants import ParseMode
 from telegram.ext import Application, Defaults
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 from handlers import conv_handler
 
@@ -22,6 +26,8 @@ COUNTER_FILE = DATA_DIR / "counter.json"
 
 
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 from paths import (
     TEMPLATES_DIR,
     OUTPUT_DIR,
@@ -32,7 +38,10 @@ from paths import (
 from handlers import conv_handler
 
 
+<<<<<<< HEAD
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 def ensure_project_layout() -> None:
     """
     Создаёт нужные директории/файлы, если их нет.

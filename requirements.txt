@@ -3,8 +3,13 @@ python-docx==1.1.2
 python-dateutil==2.9.0.post0
 lxml==6.0.0
 <<<<<<< HEAD
+<<<<<<< HEAD
 python-dotenv==1.0.1
 =======
 python-dotenv==1.0.1
 portalocker==2.8.2
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+python-dotenv==1.0.1
+portalocker==2.8.2
+>>>>>>> 1f959c8 (Restore project after local sync, add README)

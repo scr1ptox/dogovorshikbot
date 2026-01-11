@@ -1,18 +1,26 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # docx_generator.py
 from pathlib import Path
 =======
 # noinspection PyProtectedMember,PyBroadException,PyTypeChecker,DuplicatedCode
 # docx_generator.py
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+# noinspection PyProtectedMember,PyBroadException,PyTypeChecker,DuplicatedCode
+# docx_generator.py
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 from docx import Document
 from docx.shared import Pt
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 from pathlib import Path
 from paths import TEMPLATE_CONTRACT, TEMPLATE_SCHEDULE
 import subprocess
@@ -44,7 +52,10 @@ def _clone_run_rpr(src_run, dst_run) -> None:
     dst_r.insert(0, copy.deepcopy(src_rpr))
 
 # noinspection DuplicatedCode
+<<<<<<< HEAD
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 def _force_font(run, pt=10, family="Times New Roman"):
     # python-docx high-level API
     run.font.size = Pt(pt)
@@ -57,9 +68,13 @@ def _force_font(run, pt=10, family="Times New Roman"):
         run.font.small_caps = False
         run.font.all_caps = False
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # noinspection PyBroadException
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # noinspection PyBroadException
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     except Exception:
         pass
 
@@ -164,11 +179,17 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
 
     # 1) Первый run: оставляем только префикс до key
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # Сохраняем донор форматирования ДО изменения текста (важно для подчеркиваний/линий в шаблоне)
     donor_run = first_run
 
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # Сохраняем донор форматирования ДО изменения текста (важно для подчеркиваний/линий в шаблоне)
+    donor_run = first_run
+
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     first_text = first_run.text or ""
     first_run.text = first_text[:first_prefix_len]
 
@@ -187,6 +208,7 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
     paragraph._p.insert(paragraph._p.index(insert_after._r) + 1, new_run._r)
     new_run.text = value
 <<<<<<< HEAD
+<<<<<<< HEAD
     _force_font(new_run, pt, family)
 
     # Нормализуем все затронутые runs на случай странных тем/глифов
@@ -195,6 +217,8 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
 
     _normalize_paragraph(paragraph, pt, family)
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 
     if PRESERVE_TEMPLATE_FORMAT:
         # Наследуем форматирование из run, который содержал плейсхолдер в шаблоне.
@@ -211,7 +235,10 @@ def _replace_placeholder_in_paragraph_strict(paragraph, key: str, value: str, pt
         for j in range(first_i, last_i + 1):
             _force_font(spans[j][2], pt, family)
         _normalize_paragraph(paragraph, pt, family)
+<<<<<<< HEAD
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 
     return True
 
@@ -227,11 +254,16 @@ def _replace_in_paragraph(paragraph, mapping: dict, fallback_font_pt: int = 10):
         if new_text != original:
             run.text = new_text
 <<<<<<< HEAD
+<<<<<<< HEAD
             _force_font(run, fallback_font_pt, "Times New Roman")
 =======
             if not PRESERVE_TEMPLATE_FORMAT:
                 _force_font(run, fallback_font_pt, "Times New Roman")
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+            if not PRESERVE_TEMPLATE_FORMAT:
+                _force_font(run, fallback_font_pt, "Times New Roman")
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
             changed = True
 
     # 2) Жёсткая замена, если плейсхолдеры разбиты на несколько runs
@@ -242,10 +274,14 @@ def _replace_in_paragraph(paragraph, mapping: dict, fallback_font_pt: int = 10):
 
     # Если что-то меняли – дополнительно нормализуем все runs абзаца (на случай тем/глифов)
 <<<<<<< HEAD
+<<<<<<< HEAD
     if changed:
 =======
     if changed and not PRESERVE_TEMPLATE_FORMAT:
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    if changed and not PRESERVE_TEMPLATE_FORMAT:
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
         _normalize_paragraph(paragraph, fallback_font_pt, "Times New Roman")
 
 def _clear_paragraph_char_props(paragraph):
@@ -254,9 +290,13 @@ def _clear_paragraph_char_props(paragraph):
     не удаляя весь rPr (иначе теряется формат нумерации).
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # noinspection PyProtectedMember
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # noinspection PyProtectedMember
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     p = paragraph._element
     pPr = p.find(qn('w:pPr'))
     if pPr is None:
@@ -280,9 +320,13 @@ def _ensure_para_numbering_font(paragraph, font_name="Times New Roman", font_siz
     т.к. Word берёт их из w:pPr/w:rPr.
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # noinspection PyProtectedMember
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # noinspection PyProtectedMember
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     p = paragraph._element
     pPr = p.find(qn('w:pPr'))
     if pPr is None:
@@ -305,9 +349,13 @@ def _ensure_para_numbering_font(paragraph, font_name="Times New Roman", font_siz
             del rFonts.attrib[qn(theme_attr)]
     # размер в half-points
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # noinspection DuplicatedCode
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # noinspection DuplicatedCode
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     hp = str(int(font_size_pt * 2))
     sz = rPr.find(qn('w:sz'))
     if sz is None:
@@ -337,9 +385,13 @@ def _normalize_paragraph(paragraph, pt: int = 10, family: str = "Times New Roman
     try:
         paragraph.style = paragraph.part.styles['Normal']
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # noinspection PyBroadException
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # noinspection PyBroadException
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     except Exception:
         # если стиль недоступен, просто продолжаем — применим прямое форматирование к run
         pass
@@ -352,9 +404,13 @@ def _normalize_paragraph(paragraph, pt: int = 10, family: str = "Times New Roman
         pf.space_before = None
         pf.space_after = None
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     # noinspection PyBroadException
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    # noinspection PyBroadException
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     except Exception:
         pass
     _clear_paragraph_char_props(paragraph)
@@ -371,9 +427,13 @@ _SUPERSCRIPT_MAP = str.maketrans({
 })
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
  # noinspection DuplicatedCode
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+ # noinspection DuplicatedCode
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 def _desuperscript_paragraph(paragraph):
     """
     Убирает надстрочное форматирование (x² → x2) в абзаце:
@@ -399,9 +459,13 @@ def _desuperscript_paragraph(paragraph):
             run.font.superscript = False
             run.font.subscript = False
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         # noinspection PyBroadException
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+        # noinspection PyBroadException
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
         except Exception:
             pass
         # чистим XML выравнивание по вертикали
@@ -417,10 +481,14 @@ def _desuperscript_paragraph(paragraph):
             run.text = run.text.translate(_SUPERSCRIPT_MAP)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def _replace_in_document(doc: Document, mapping: dict):
 =======
 def _replace_in_document(doc: DocxDocument, mapping: dict):
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+def _replace_in_document(doc: DocxDocument, mapping: dict):
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     # Текст документа
     for para in doc.paragraphs:
         _replace_in_paragraph(para, mapping)
@@ -452,6 +520,7 @@ def _replace_in_document(doc: DocxDocument, mapping: dict):
 def fill_placeholders(doc_path: Path, output_path: Path, replacements: dict):
     doc = Document(str(doc_path))
 <<<<<<< HEAD
+<<<<<<< HEAD
     # Enforce Normal style to TNR 10pt globally (baseline), helps avoid theme shrink
     try:
         normal_style = doc.styles['Normal']
@@ -460,6 +529,8 @@ def fill_placeholders(doc_path: Path, output_path: Path, replacements: dict):
     except Exception:
         pass
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     if not PRESERVE_TEMPLATE_FORMAT:
         # Enforce Normal style to TNR 10pt globally (baseline), helps avoid theme shrink
         try:
@@ -468,14 +539,20 @@ def fill_placeholders(doc_path: Path, output_path: Path, replacements: dict):
             normal_style.font.size = Pt(10)
         except Exception:
             pass
+<<<<<<< HEAD
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
     _replace_in_document(doc, replacements)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(output_path))
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 def convert_docx_to_pdf(docx_path: Path) -> Path:
     """
     Конвертация DOCX → PDF через LibreOffice (headless).
@@ -494,7 +571,10 @@ def convert_docx_to_pdf(docx_path: Path) -> Path:
     return docx_path.with_suffix(".pdf")
 
 
+<<<<<<< HEAD
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 # noinspection SpellCheckingInspection,PyPep8Naming
 def generate_contract_and_schedule(data: dict, out_dir: Path):
     """
@@ -506,12 +586,17 @@ def generate_contract_and_schedule(data: dict, out_dir: Path):
     out_dir.mkdir(parents=True, exist_ok=True)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     contract_template = Path("templates/murabaha_template.docx")
     schedule_template = Path("templates/murabaha_schedule.docx")
 =======
     contract_template = TEMPLATE_CONTRACT
     schedule_template = TEMPLATE_SCHEDULE
 >>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
+=======
+    contract_template = TEMPLATE_CONTRACT
+    schedule_template = TEMPLATE_SCHEDULE
+>>>>>>> 1f959c8 (Restore project after local sync, add README)
 
     contract_out = out_dir / f"dogovor_{data['contract_number']}.docx"
     schedule_out = out_dir / f"schedule_{data['contract_number']}.docx"
