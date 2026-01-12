@@ -1,17 +1,5 @@
-# utils.py
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-<<<<<<< HEAD
-<<<<<<< HEAD
-import math
-
-
-def round_up_amount(value: float) -> int:
-    """Округляем всегда вверх до целого рубля."""
-    return math.ceil(value)
-=======
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 from decimal import Decimal, ROUND_UP
 
 
@@ -22,10 +10,6 @@ def round_up_amount(value) -> int:
     """
     d = Decimal(str(value))
     return int(d.to_integral_value(rounding=ROUND_UP))
-<<<<<<< HEAD
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 
 
 def add_months_with_payday(base_date: datetime, months: int, payday: int) -> datetime:
@@ -51,15 +35,7 @@ def generate_schedule(start_date: datetime, term: int, payday: int, cost: int, a
         balance = 0
 
     # ежемесячный платёж с округлением вверх
-<<<<<<< HEAD
-<<<<<<< HEAD
-    base_payment = math.ceil(balance / term)
-=======
     base_payment = round_up_amount(Decimal(balance) / Decimal(term))
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
-    base_payment = round_up_amount(Decimal(balance) / Decimal(term))
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 
     schedule = []
     current_date = start_date

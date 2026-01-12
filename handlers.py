@@ -1,12 +1,5 @@
 # handlers.py
 from datetime import datetime
-<<<<<<< HEAD
-<<<<<<< HEAD
-from pathlib import Path
-=======
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 import os
 import logging
 
@@ -16,18 +9,9 @@ from telegram.ext import (
 )
 
 from contract_number import generate_contract_number
-from utils import generate_schedule, round_up_amount
 from docx_generator import generate_contract_and_schedule
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-OUTPUT_DIR = Path("output") / "ready_contracts"
-=======
+from utils import generate_schedule, round_up_amount
 from paths import OUTPUT_DIR
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
-from paths import OUTPUT_DIR
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 
 # Conversation states
 (
@@ -200,13 +184,6 @@ async def ask_pledge(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return PLEDGE
     context.user_data["zalog"] = ans
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    await update.message.reply_text("Формирую документы...", reply_markup=ReplyKeyboardRemove())
-    return await confirm_and_generate(update, context)
-=======
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
     return await ask_confirm(update, context)
 
 
@@ -266,10 +243,6 @@ async def handle_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text("Выберите действие кнопками.")
     return CONFIRM
-<<<<<<< HEAD
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 
 
 async def confirm_and_generate(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -332,38 +305,17 @@ async def confirm_and_generate(update: Update, context: ContextTypes.DEFAULT_TYP
     repl["contract_number"] = ud["contract_number"]
     # генерим .docx
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-<<<<<<< HEAD
-<<<<<<< HEAD
-    contract_path, schedule_path = generate_contract_and_schedule(
-=======
     contract_docx, schedule_docx = generate_contract_and_schedule(
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
-    contract_docx, schedule_docx = generate_contract_and_schedule(
->>>>>>> 1f959c8 (Restore project after local sync, add README)
         data=repl, out_dir=OUTPUT_DIR
     )
 
     # отправляем и чистим
     try:
-<<<<<<< HEAD
-<<<<<<< HEAD
-        await update.message.reply_document(open(contract_path, "rb"), filename=contract_path.name)
-        await update.message.reply_document(open(schedule_path, "rb"), filename=schedule_path.name)
-    finally:
-        for p in (contract_path, schedule_path):
-=======
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
         for path in (contract_docx, schedule_docx):
             with open(path, "rb") as f:
                 await update.message.reply_document(f, filename=path.name)
     finally:
         for p in (contract_docx, schedule_docx):
-<<<<<<< HEAD
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
             try:
                 os.remove(p)
             except Exception:
@@ -397,15 +349,7 @@ conv_handler = ConversationHandler(
         TERM_MONTHS: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_term_months)],
         PAYDAY: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_payday)],
         PLEDGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_pledge)],
-<<<<<<< HEAD
-<<<<<<< HEAD
-        CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_pledge)],
-=======
         CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirm)],
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
-        CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirm)],
->>>>>>> 1f959c8 (Restore project after local sync, add README)
     },
     fallbacks=[CommandHandler("start", start)],
 )

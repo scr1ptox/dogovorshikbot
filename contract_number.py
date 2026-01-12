@@ -1,19 +1,8 @@
 # contract_number.py
 import json
 from datetime import datetime
-<<<<<<< HEAD
-<<<<<<< HEAD
-from pathlib import Path
-
-COUNTER_FILE = Path("data/counter.json")
-=======
 from paths import COUNTER_FILE
 import portalocker
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
-from paths import COUNTER_FILE
-import portalocker
->>>>>>> 1f959c8 (Restore project after local sync, add README)
 
 
 def load_counters():
@@ -40,30 +29,8 @@ def save_counters(counters: dict):
 def generate_contract_number(contract_date: datetime) -> str:
     """
     Формат номера договора:
-<<<<<<< HEAD
-<<<<<<< HEAD
-    X/YY/MM/DD
-
-    где:
-      X = порядковый номер договора в день (1, 2, 3 …)
-      YY = последние 2 цифры года
-      MM = месяц
-      DD = день
-    """
-    counters = load_counters()
-    date_key = contract_date.strftime("%Y-%m-%d")
-
-    current_count = counters.get(date_key, 0) + 1
-    counters[date_key] = current_count
-    save_counters(counters)
-
-    # возвращаем строку с тире и слэшами → X-YY/MM/DD
-=======
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
     X-YY/MM/DD
     """
-
     COUNTER_FILE.parent.mkdir(parents=True, exist_ok=True)
 
     # открываем файл с блокировкой
@@ -88,8 +55,4 @@ def generate_contract_number(contract_date: datetime) -> str:
 
         portalocker.unlock(f)
 
-<<<<<<< HEAD
->>>>>>> 03ccfeb (Fix docx generation, disable PDF, stabilize template formatting)
-=======
->>>>>>> 1f959c8 (Restore project after local sync, add README)
     return f"{current_count}-{contract_date.strftime('%y/%m/%d')}"
